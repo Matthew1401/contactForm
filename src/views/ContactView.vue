@@ -4,9 +4,11 @@
       <h1>Send me a message</h1>
       <p>Well just write down and send us your thoughts if you want or whatever.</p>
 
+      <!-- submit.prevent co robi? -->
       <form @submit.prevent="submitForm" id="form">
         <input type="text" name="name" v-model="name" class="input" placeholder='Name' required>
         <input type="email" name="email" v-model="email" class="input" placeholder='Email' required>
+        <div>{{ validEmail }}</div>
         <input type="text" name="title" v-model="subtitle" class="input" placeholder='Title' required>
         <textarea name="message" v-model="message" class="input textarea" placeholder='Message' required></textarea>
         <button type="submit" class="input submit">Send</button>
@@ -17,49 +19,58 @@
 </template>
 
 <script>
-    const WEB3FORMS_ACCESS_KEY = "c508eb53-1f31-4afd-a2f0-4e5f5cbab661";
-    export default {
-        data() {
-            return {
-                name: "",
-                email: "",
-                subtitle: "",
-                message: "",
-                response: "",
-            };
-        },
-        methods: {
-            async submitForm() {
-                const response = await fetch("https://api.web3forms.com/submit", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-                    body: JSON.stringify({
-                        access_key: WEB3FORMS_ACCESS_KEY,
-                        name: this.name,
-                        email: this.email,
-                        subject: this.subtitle,
-                        message: this.message,
-                    }),
-                });
-                const result = await response.json();
-                if (result.success) {
-                    console.log('sended sucessfully');
-                    this.name = ''
-                    this.email = ''
-                    this.subtitle = ''
-                    this.message = ''
-                    this.response = 'Sended sucesfully!'
-                    console.log(result);
-                    setTimeout(() => {
-                        this.response = '';
-                    }, 3000);
-                }
+  const WEB3FORMS_ACCESS_KEY = "c508eb53-1f31-4afd-a2f0-4e5f5cbab661";
+  export default {
+    data() {
+      return {
+        name: "",
+        email: "",
+        subtitle: "",
+        message: "",
+        response: "",
+        validEmail: ""
+      };
+    },
+    methods: {
+      async submitForm() {
+        if (! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(this.email)) {
+          this.validEmail = 'Please enter a valid email address'
+        } 
+        else {
+          this.validEmail = ''
+          // Przerobić na promise, różnica między promise a callback
+          const response = await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
             },
-        },
-    };
+            body: JSON.stringify({
+              access_key: WEB3FORMS_ACCESS_KEY,
+              name: this.name,
+              email: this.email,
+              subject: this.subtitle,
+              message: this.message,
+            }),
+          });
+          const result = await response.json();
+          if (result.success) {
+            console.log('sended sucessfully');
+            this.name = ''
+            this.email = ''
+            this.subtitle = ''
+            this.message = ''
+            this.validEmail = ''
+            this.response = 'Sended sucesfully!'
+            console.log(result);
+            setTimeout(() => {
+              this.response = '';
+            }, 3000);
+          }
+        }       
+      },
+    },
+  };
   </script>
 
 <style scoped>
