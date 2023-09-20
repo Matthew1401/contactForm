@@ -1,5 +1,5 @@
  <template>
-  <!-- <main>
+  <main>
     <div class="form-container">
       <h1>Send me a message</h1>
       <p>Well just write down and send us your thoughts if you want or whatever.</p>
@@ -13,13 +13,11 @@
         <div class="response">{{ response }}</div>
       </form>
     </div>
-  </main> -->
-  <ContactForm />
+  </main>
 </template>
 
 <script>
     const WEB3FORMS_ACCESS_KEY = "c508eb53-1f31-4afd-a2f0-4e5f5cbab661";
-    import ContactForm from '../components/ContactForm.vue'
     export default {
         data() {
             return {
@@ -30,13 +28,7 @@
                 response: "",
             };
         },
-        components: {
-            ContactForm
-        },
         methods: {
-            sumbitValues: function (data) {
-
-            },
             async submitForm() {
                 const response = await fetch("https://api.web3forms.com/submit", {
                     method: "POST",
@@ -70,7 +62,7 @@
     };
   </script>
 
-<!-- <style scoped>
+<style scoped>
   main {
     width: 100vw;
     height: 100vh;
@@ -187,4 +179,4 @@
     }
   }
 
-</style> -->
+</style>
