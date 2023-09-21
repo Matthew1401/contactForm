@@ -21,6 +21,9 @@
 
 <script setup>
   import { reactive } from 'vue'
+  import axios from 'axios'
+
+  // const axios = require('axios');
   const WEB3FORMS_ACCESS_KEY = "c508eb53-1f31-4afd-a2f0-4e5f5cbab661";
 
   const data = reactive( {
@@ -32,43 +35,77 @@
     validEmail: ""
   })
 
-  const submitForm = async function() {
+
+  const submitForm = () => {
     if (! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.email)) {
       data.validEmail = 'Please enter a valid email address'
     } 
     else {
-      data.validEmail = ''
-      // Przerobić na promise, różnica między promise a callback
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          access_key: WEB3FORMS_ACCESS_KEY,
-          name: data.name,
-          email: data.email,
-          subject: data.subtitle,
-          message: data.message,
-        }),
+      axios.post('https://api.web3forms.com/submit', {
+        access_key: WEB3FORMS_ACCESS_KEY,
+        name: data.name,
+        email: data.email,
+        subject: data.subtitle,
+        message: data.message,
+      })
+      .then(function (response) {
+        console.log(response);
+        if (response.data.success) {
+          console.log('sended sucessfully');
+          data.name = ''
+          data.email = ''
+          data.subtitle = ''
+          data.message = ''
+          data.validEmail = ''
+          data.response = 'Sended sucesfully!'
+          setTimeout(() => {
+            data.response = '';
+          }, 3000);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-      const result = await response.json();
-      if (result.success) {
-        console.log('sended sucessfully');
-        data.name = ''
-        data.email = ''
-        data.subtitle = ''
-        data.message = ''
-        data.validEmail = ''
-        data.response = 'Sended sucesfully!'
-        console.log(result);
-        setTimeout(() => {
-          data.response = '';
-        }, 3000);
-      }
-    }       
+    }
   }
+
+  // const submitForm = async function() {
+  //   if (! /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(data.email)) {
+  //     data.validEmail = 'Please enter a valid email address'
+  //   } 
+  //   else {
+  //     data.validEmail = ''
+  //     // Przerobić na promise, różnica między promise a callback
+  //     const response = await fetch("https://api.web3forms.com/submit", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         access_key: WEB3FORMS_ACCESS_KEY,
+  //         name: data.name,
+  //         email: data.email,
+  //         subject: data.subtitle,
+  //         message: data.message,
+  //       }),
+  //     });
+  //     const result = await response.json();
+  //     if (result.success) {
+  //       console.log('sended sucessfully');
+  //       data.name = ''
+  //       data.email = ''
+  //       data.subtitle = ''
+  //       data.message = ''
+  //       data.validEmail = ''
+  //       data.response = 'Sended sucesfully!'
+  //       console.log(result);
+  //       setTimeout(() => {
+  //         data.response = '';
+  //       }, 3000);
+  //     }
+  //   }       
+  // }
 </script>
 
 <style scoped>
