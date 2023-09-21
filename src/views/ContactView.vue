@@ -5,6 +5,7 @@
       <p>Well just write down and send us your thoughts if you want or whatever.</p>
 
       <!-- submit.prevent co robi? -->
+      <!-- @submit to event, a .prevent to modyfikacja do eventu zapobiegające przeładowywaniu się strony. -->
       <form @submit.prevent="submitForm" id="form">
         <input type="text" name="name" v-model="name" class="input" placeholder='Name' required>
         <input type="email" name="email" v-model="email" class="input" placeholder='Email' required>
