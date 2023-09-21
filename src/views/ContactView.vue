@@ -41,31 +41,39 @@
       data.validEmail = 'Please enter a valid email address'
     } 
     else {
-      axios.post('https://api.web3forms.com/submit', {
-        access_key: WEB3FORMS_ACCESS_KEY,
-        name: data.name,
-        email: data.email,
-        subject: data.subtitle,
-        message: data.message,
-      })
-      .then(function (response) {
-        console.log(response);
-        if (response.data.success) {
-          console.log('sended sucessfully');
+      let myPromise = new Promise(function(myResolve, myReject) {
+        axios.post('https://api.web3forms.com/submit', {
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: data.name,
+          email: data.email,
+          subject: data.subtitle,
+          message: data.message,
+        })
+        .then(function (response) {
+          myResolve(response)    
+        })
+        .catch(function (error) {
+          myReject(error)
+        });
+      });
+      
+      myPromise.then(
+        function(value) {
+          console.log(value.data.message);
           data.name = ''
           data.email = ''
           data.subtitle = ''
           data.message = ''
           data.validEmail = ''
-          data.response = 'Sended sucesfully!'
+          data.response = value.data.message
           setTimeout(() => {
             data.response = '';
           }, 3000);
+        },
+        function(error) {
+          console.log(error);
         }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      );
     }
   }
 
